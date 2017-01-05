@@ -1,0 +1,24 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="ff-question">
+  <template>
+    <style>
+      :host {
+        background: white;
+      }
+    </style>
+    
+    [[question.text]]
+    <ul>
+      <template is="dom-repeat" items="[[question.choices]]">
+        <li>[[item.text]]</li>
+      </template>
+    </ul>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'ff-question'
+    });
+  </script>
+</dom-module>

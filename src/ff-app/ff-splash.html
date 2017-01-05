@@ -1,0 +1,26 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="ff-splash">
+  <template>
+    <h1>Login</h1>
+    <button on-tap="_login">Login</button>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'ff-splash',
+
+      ready: function () {
+        this._loginCallback = this._loginCallback.bind(this);
+      },
+
+      _login: function () {
+        IN.User.authorize(this._loginCallback);
+      },
+
+      _loginCallback: function (evt) {
+        this.fire('authenticated');
+      }
+    });
+  </script>
+</dom-module>

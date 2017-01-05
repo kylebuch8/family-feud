@@ -1,0 +1,66 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="ff-splash.html">
+<link rel="import" href="ff-main.html">
+
+<dom-module id="ff-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <iron-pages selected="[[page]]" attr-for-selected="name">
+      <ff-splash name="splash" profile="{{profile}}"></ff-splash>
+      <ff-main name="main" profile="[[profile]]"></ff-main>
+    </iron-pages>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'ff-app',
+
+      listeners: {
+        'profile-ready': '_profileReady',
+        'authenticated': '_systemReadyCallback'
+      },
+
+      ready: function () {
+        this._systemReadyCallback = this._systemReadyCallback.bind(this);
+        this._peopleSuccessCallback = this._peopleSuccessCallback.bind(this);
+        this._peopleErrorCallback = this._peopleErrorCallback.bind(this);
+
+        IN.Event.onOnce(IN, 'systemReady', this._systemReadyCallback);
+      },
+
+      _systemReadyCallback: function () {
+        if (!IN.User.isAuthorized()) {
+          this.page = 'splash';
+          return;
+        }
+
+        IN.API.Raw("/people/~:(id,first-name,last-name,formatted-name,headline,location,industry,num-connections,specialties,positions,picture-url)")
+          .result(this._peopleSuccessCallback)
+          .error(this._peopleErrorCallback);
+      },
+
+      _peopleSuccessCallback: function (data) {
+        // send all of this data to the server
+
+        console.log(data);
+        console.log(JSON.stringify(data));
+        this.profile = data;
+        this.fire('profile-ready');
+      },
+
+      _peopleErrorCallback: function (error) {
+        console.log(error);
+      },
+
+      _profileReady: function () {
+        this.page = 'main';
+      }
+    });
+  </script>
+</dom-module>
